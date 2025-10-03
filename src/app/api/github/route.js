@@ -10,13 +10,18 @@ export async function GET() {
         });
 
         if (!res.ok) {
-            return NextResponse.json({ error: "Failed to fetch" }, { status: res.status });
+            return NextResponse.json(
+                { error: "Failed to fetch" },
+                { status: res.status }
+            );
         }
 
         const data = await res.json();
 
         return NextResponse.json({
             avatar: data.avatar_url,
+            name: data.name || data.login,
+            handle: data.login,
         });
     } catch (err) {
         return NextResponse.json({ error: "Internal Error" }, { status: 500 });

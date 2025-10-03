@@ -7,28 +7,28 @@ import { FaLinkedin, FaTwitter } from "react-icons/fa";
 import { useEffect, useState } from "react";
 
 export default function Card() {
-  const [avatar, setAvatar] = useState(null);
+  const [profile, setProfile] = useState(null);
 
   useEffect(() => {
     fetch("api/github")
       .then((res) => res.json())
       .then((data) => {
-        console.log("API data:", data);
-        setAvatar(data.avatar)
+        setProfile({
+          avatar: data.avatar,
+          name: data.name,
+          handle: data.handle,
+        })
       })
-
-
-    console.log(avatar);
   }, []);
 
   return (
     <div className="w-full max-w-sm sm:max-w-md bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md p-6 sm:p-8 transition-colors duration-300">
       {/* Top: Avatar and Name */}
       <div className="flex items-center space-x-4">
-        {avatar ? (
+        {profile?.avatar ? (
           <Image
-            src={avatar}
-            alt={user.name}
+            src={profile.avatar}
+            alt={profile.name | ""}
             width={64}
             height={64}
             className="rounded-full border-2 border-purple-500"
@@ -38,10 +38,10 @@ export default function Card() {
         )}
         <div>
           <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">
-            {user.name}
+            {profile?.name || ""}
           </h2>
           <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">
-            {user.handle}
+            @{profile?.handle || ""}
           </p>
         </div>
       </div>
