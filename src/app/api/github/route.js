@@ -22,6 +22,10 @@ export async function GET() {
             avatar: data.avatar_url,
             name: data.name || data.login,
             handle: data.login,
+            bio: data.bio,
+            blog: data.blog,
+            twitter: data.twitter_username,
+            github: data.html_url
         });
     } catch (err) {
         return NextResponse.json({ error: "Internal Error" }, { status: 500 });

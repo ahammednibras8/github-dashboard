@@ -3,7 +3,7 @@
 import { user } from "@/data/profile";
 import Image from "next/image";
 import { FiMail, FiGithub } from "react-icons/fi";
-import { FaLinkedin, FaTwitter } from "react-icons/fa";
+import { FaGlobe, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { useEffect, useState } from "react";
 
 export default function Card() {
@@ -13,11 +13,7 @@ export default function Card() {
     fetch("api/github")
       .then((res) => res.json())
       .then((data) => {
-        setProfile({
-          avatar: data.avatar,
-          name: data.name,
-          handle: data.handle,
-        })
+        setProfile(data)
       })
   }, []);
 
@@ -48,13 +44,28 @@ export default function Card() {
 
       {/* Social / Contact */}
       <div className="flex items-center mt-4 space-x-4 text-gray-600 dark:text-gray-400">
+        {profile?.blog && (
+          <a
+            href={profile.blog}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-blue-600 transition-colors"
+          >
+            <FaGlobe size={18} />
+          </a>
+        )}
         {user.email && (
           <a href={`mailto:${user.email}`} className="hover:text-blue-500 transition-colors">
             <FiMail size={18} />
           </a>
         )}
-        {user.github && (
-          <a href={user.github} target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 dark:hover:text-white transition-colors">
+        {profile?.github && (
+          <a
+            href={profile.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-gray-900 dark:hover:text-white transition-colors"
+          >
             <FiGithub size={18} />
           </a>
         )}
@@ -63,27 +74,16 @@ export default function Card() {
             <FaLinkedin size={18} />
           </a>
         )}
-        {user.twitter && (
-          <a href={user.twitter} target="_blank" rel="noopener noreferrer" className="hover:text-blue-400 transition-colors">
+        {profile?.twitter && (
+          <a
+            href={`https://x.com/${profile.twitter}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-blue-400 transition-colors"
+          >
             <FaTwitter size={18} />
           </a>
         )}
-      </div>
-
-      {/* Stats / Metrics */}
-      <div className="flex justify-between mt-6 bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
-        <div className="text-center">
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-300">Repos</p>
-          <p className="text-lg font-semibold text-gray-900 dark:text-white">{user.stats.repos}</p>
-        </div>
-        <div className="text-center">
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-300">Followers</p>
-          <p className="text-lg font-semibold text-gray-900 dark:text-white">{user.stats.followers}</p>
-        </div>
-        <div className="text-center">
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-300">Stars</p>
-          <p className="text-lg font-semibold text-gray-900 dark:text-white">{user.stats.stars}</p>
-        </div>
       </div>
 
       {/* Organizations */}
