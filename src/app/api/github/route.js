@@ -2,32 +2,53 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
     try {
-        const res = await fetch("https://api.github.com/users/ahammednibras8", {
-            headers: {
-                Authorization: `token ${process.env.GITHUB_TOKEN}`,
-            },
-            cache: "no-store",
-        });
+        const [userRes, orgsRes] = await Promise.all([
+            fetch("https://api.github.com/user", {
+                headers: {
+                    Authorization: `token ${process.env.GITHUB_TOKEN}`,
+                    'User-Agent': 'Ahammed-Nibras-Portfolio'
+                },
+                cache: "no-store",
+            }),
+            fetch("https://api.github.com/user/orgs", {
+                headers: {
+                    Authorization: `token ${process.env.GITHUB_TOKEN}`,
+                    'User-Agent': 'Ahammed-Nibras-Portfolio'
+                },
+                cache: "no-store"
+            })
+        ]);
 
-        if (!res.ok) {
+        if (!userRes.ok) {
+            console.error("GitHub User Fetch failed:", userRes.status, await userRes.text());
             return NextResponse.json(
-                { error: "Failed to fetch" },
-                { status: res.status }
+                { error: "Failed to fetch user data from GitHub" },
+                { status: userRes.status }
             );
         }
 
-        const data = await res.json();
+        const data = await userRes.json();
+        const orgs = orgsRes.ok ? await orgsRes.json() : [];
+
+        console.log(data);
+        console.log(orgs);
 
         return NextResponse.json({
             avatar: data.avatar_url,
-            name: data.name || data.login,
+            name: data.name,
             handle: data.login,
             bio: data.bio,
             blog: data.blog,
-            twitter: data.twitter_username,
-            github: data.html_url
-        });
+            x: data.twitter_username,
+            github: data.html_url,
+            orgs: orgs.map(org => ({
+                login: org.login,
+                avatar: org.avatar_url,
+                url: `https://www.github.com/${org.login}`
+            }))
+        })
     } catch (err) {
-        return NextResponse.json({ error: "Internal Error" }, { status: 500 });
+        console.error("Internal API Error:", err);
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

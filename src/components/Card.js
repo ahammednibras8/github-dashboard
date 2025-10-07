@@ -1,105 +1,129 @@
 'use client';
 
-import { user } from "@/data/profile";
-import Image from "next/image";
-import { FiMail, FiGithub } from "react-icons/fi";
-import { FaGlobe, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import { FiGithub } from "react-icons/fi";
+import { FaGlobe, FaXTwitter } from "react-icons/fa6";
 
 export default function Card() {
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    fetch("api/github")
-      .then((res) => res.json())
-      .then((data) => {
-        setProfile(data)
+    fetch("/api/github")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch profile data');
+        }
+        return res.json();
       })
+      .then(setProfile)
+      .catch((error) => {
+        console.error("Profile fetch error:", error);
+      });
   }, []);
+
+  if (!profile) {
+    return (
+      <div className="w-full max-w-sm sm:max-w-md p-8 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-md animate-pulse">
+        <div className="flex space-x-4 items-center">
+          <div className="w-16 h-16 bg-gray-300 rounded-full" />
+          <div className="flex-1 space-y-2">
+            <div className="w-1/2 h-4 bg-gray-300 rounded" />
+            <div className="w-1/3 h-4 bg-gray-200 rounded" />
+          </div>
+        </div>
+        <div className="mt-4 w-full h-3 bg-gray-200 rounded" />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-sm sm:max-w-md bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md p-6 sm:p-8 transition-colors duration-300">
-      {/* Top: Avatar and Name */}
       <div className="flex items-center space-x-4">
-        {profile?.avatar ? (
-          <Image
-            src={profile.avatar}
-            alt={profile.name | ""}
-            width={64}
-            height={64}
-            className="rounded-full border-2 border-purple-500"
-          />
-        ) : (
-          <div className="w-16 h-16 rounded-full bg-gray-300 animate-pulse" />
-        )}
+        <Image
+          src={profile.avatar || null}
+          alt={profile.name || "GitHub Profile"}
+          width={64}
+          height={64}
+          className="rounded-full border-2 border-purple-500"
+        />
         <div>
           <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">
-            {profile?.name || ""}
+            {profile.name}
           </h2>
           <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">
-            @{profile?.handle || ""}
+            @{profile.handle}
           </p>
         </div>
       </div>
 
-      {/* Social / Contact */}
+      {/* Bio */}
+      {profile.bio && (
+        <p className="mt-3 text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+          {profile.bio}
+        </p>
+      )}
+
+      {/* Social Links */}
       <div className="flex items-center mt-4 space-x-4 text-gray-600 dark:text-gray-400">
-        {profile?.blog && (
-          <a
-            href={profile.blog}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-blue-600 transition-colors"
-          >
-            <FaGlobe size={18} />
-          </a>
-        )}
-        {user.email && (
-          <a href={`mailto:${user.email}`} className="hover:text-blue-500 transition-colors">
-            <FiMail size={18} />
-          </a>
-        )}
-        {profile?.github && (
+        {profile.github && (
           <a
             href={profile.github}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-gray-900 dark:hover:text-white transition-colors"
+            aria-label="GitHub"
           >
             <FiGithub size={18} />
           </a>
         )}
-        {user.linkedin && (
-          <a href={user.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition-colors">
-            <FaLinkedin size={18} />
-          </a>
-        )}
-        {profile?.twitter && (
+        {profile.x && (
           <a
-            href={`https://x.com/${profile.twitter}`}
+            href={`https://x.com/${profile.x}`}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-blue-400 transition-colors"
+            aria-label="Twitter"
           >
-            <FaTwitter size={18} />
+            <FaXTwitter size={18} />
+          </a>
+        )}
+        {profile.blog && (
+          <a
+            href={profile.blog.startsWith("http") ? profile.blog : `https://${profile.blog}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-blue-600 transition-colors"
+            aria-label="Website"
+          >
+            <FaGlobe size={18} />
           </a>
         )}
       </div>
 
       {/* Organizations */}
-      {user.orgs.length > 0 && (
-        <div className="mt-4">
+      {profile.orgs?.length > 0 && (
+        <div className="mt-5">
           <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
             Organizations
           </h3>
-          <div className="flex flex-wrap gap-2">
-            {user.orgs.map((org, idx) => (
-              <span
+          <div className="flex flex-wrap gap-3">
+            {profile.orgs.map((org, idx) => (
+              <a
                 key={idx}
-                className="px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs font-medium"
+                href={org.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block"
               >
-                {org}
-              </span>
+                <Image
+                  src={org.avatar || null}
+                  alt={org.login}
+                  width={28}
+                  height={28}
+                  className="rounded-full border border-gray-300 dark:border-gray-600 hover:scale-105 transition-transform w-7 h-7 object-cover"
+                />
+              </a>
             ))}
           </div>
         </div>
