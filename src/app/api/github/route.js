@@ -30,9 +30,6 @@ export async function GET() {
         const data = await userRes.json();
         const orgs = orgsRes.ok ? await orgsRes.json() : [];
 
-        console.log(data);
-        console.log(orgs);
-
         return NextResponse.json({
             avatar: data.avatar_url,
             name: data.name,
