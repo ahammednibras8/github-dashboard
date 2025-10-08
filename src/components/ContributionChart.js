@@ -14,7 +14,7 @@ export default function ContributionChart() {
                 setTotal(data.total || 0);
             })
             .catch(console.error);
-    })
+    }, []);
 
     if (!weeks.length) {
         return (
