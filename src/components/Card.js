@@ -11,44 +11,41 @@ export default function Card() {
   useEffect(() => {
     fetch("/api/github")
       .then((res) => {
-        if (!res.ok) {
-          throw new Error('Failed to fetch profile data');
-        }
+        if (!res.ok) throw new Error("Failed to fetch profile data");
         return res.json();
       })
       .then(setProfile)
-      .catch((error) => {
-        console.error("Profile fetch error:", error);
-      });
+      .catch((error) => console.error("Profile fetch error:", error));
   }, []);
 
   if (!profile) {
     return (
-      <div className="w-full max-w-sm sm:max-w-md p-8 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-md animate-pulse">
+      <div className="w-full max-w-sm sm:max-w-md p-8 rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-md animate-pulse">
         <div className="flex space-x-4 items-center">
-          <div className="w-16 h-16 bg-gray-300 rounded-full" />
+          <div className="w-16 h-16 bg-gray-300 dark:bg-gray-700 rounded-full" />
           <div className="flex-1 space-y-2">
-            <div className="w-1/2 h-4 bg-gray-300 rounded" />
-            <div className="w-1/3 h-4 bg-gray-200 rounded" />
+            <div className="w-1/2 h-4 bg-gray-300 dark:bg-gray-600 rounded" />
+            <div className="w-1/3 h-4 bg-gray-200 dark:bg-gray-700 rounded" />
           </div>
         </div>
-        <div className="mt-4 w-full h-3 bg-gray-200 rounded" />
+        <div className="mt-4 w-full h-3 bg-gray-200 dark:bg-gray-700 rounded" />
       </div>
     );
   }
 
   return (
-    <div className="w-full max-w-sm sm:max-w-md bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-md p-6 sm:p-8 transition-colors duration-300">
+    <div className="w-full max-w-sm sm:max-w-md bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg p-6 sm:p-8 transition-colors duration-300">
+      {/* Header */}
       <div className="flex items-center space-x-4">
         <Image
-          src={profile.avatar || null}
+          src={profile.avatar || ""}
           alt={profile.name || "GitHub Profile"}
-          width={64}
-          height={64}
-          className="rounded-full border-2 border-purple-500"
+          width={72}
+          height={72}
+          className="rounded-full border border-gray-300 dark:border-gray-600 shadow-sm"
         />
         <div>
-          <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
             {profile.name}
           </h2>
           <p className="text-gray-500 dark:text-gray-400 text-sm sm:text-base">
@@ -59,13 +56,13 @@ export default function Card() {
 
       {/* Bio */}
       {profile.bio && (
-        <p className="mt-3 text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
+        <p className="mt-4 text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
           {profile.bio}
         </p>
       )}
 
       {/* Social Links */}
-      <div className="flex items-center mt-4 space-x-4 text-gray-600 dark:text-gray-400">
+      <div className="flex items-center mt-5 space-x-5 text-gray-500 dark:text-gray-400">
         {profile.github && (
           <a
             href={profile.github}
@@ -74,7 +71,7 @@ export default function Card() {
             className="hover:text-gray-900 dark:hover:text-white transition-colors"
             aria-label="GitHub"
           >
-            <FiGithub size={18} />
+            <FiGithub size={20} />
           </a>
         )}
         {profile.x && (
@@ -82,10 +79,10 @@ export default function Card() {
             href={`https://x.com/${profile.x}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-blue-400 transition-colors"
-            aria-label="Twitter"
+            className="hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+            aria-label="X (Twitter)"
           >
-            <FaXTwitter size={18} />
+            <FaXTwitter size={20} />
           </a>
         )}
         {profile.blog && (
@@ -93,18 +90,18 @@ export default function Card() {
             href={profile.blog.startsWith("http") ? profile.blog : `https://${profile.blog}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-blue-600 transition-colors"
+            className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
             aria-label="Website"
           >
-            <FaGlobe size={18} />
+            <FaGlobe size={20} />
           </a>
         )}
       </div>
 
       {/* Organizations */}
       {profile.orgs?.length > 0 && (
-        <div className="mt-5">
-          <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
+        <div className="mt-6">
+          <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">
             Organizations
           </h3>
           <div className="flex flex-wrap gap-3">
@@ -117,11 +114,11 @@ export default function Card() {
                 className="inline-block"
               >
                 <Image
-                  src={org.avatar || null}
+                  src={org.avatar || ""}
                   alt={org.login}
-                  width={28}
-                  height={28}
-                  className="rounded-full border border-gray-300 dark:border-gray-600 hover:scale-105 transition-transform w-7 h-7 object-cover"
+                  width={32}
+                  height={32}
+                  className="rounded-full border border-gray-300 dark:border-gray-600 hover:scale-110 transition-transform w-8 h-8 object-cover"
                 />
               </a>
             ))}
